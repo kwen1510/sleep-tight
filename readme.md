@@ -73,6 +73,26 @@ python3 tools/sleep_tight_cli.py status
 
 Synthetic values are clearly labelled in the dashboards and reports. They are included so judges can test the workflow without rebuilding or pairing devices.
 
+## Screenshots
+
+These images show the real device surfaces and the judge-facing simulations included in the repo.
+
+| Phone sync | Watch heart-rate capture |
+|---|---|
+| ![Android phone Sleep Tight sync screen](docs/assets/phone-sync.jpeg) | ![Galaxy Watch Sleep Tight vitals push screen](docs/assets/watch-vitals.jpeg) |
+
+| Demo walkthrough | Mac dashboard |
+|---|---|
+| ![Sleep Tight platform walkthrough](docs/assets/platform-demo.png) | ![Sleep Tight Mac dashboard](docs/assets/dashboard.png) |
+
+| Lamp simulation | Sleep report |
+|---|---|
+| ![Sleep Tight lamp and background sound simulation](docs/assets/wind-down-demo.png) | ![Sleep Tight 30-day sleep report](docs/assets/sleep-report.png) |
+
+| Future nudge simulator |
+|---|
+| ![Sleep Tight future nudge simulator](docs/assets/future-nudge.png) |
+
 Sleep Tight is a local-first bedtime personalization prototype. A phone, Galaxy Watch, and Mac work together each night so Codex can use the day's vitals and the final pre-sleep heart-rate window to choose a gentle light and background-sound plan.
 
 The project avoids reacting to uncertain real-time sleep stages. Instead, it focuses on the period right before sleep, where recent behaviour, stress signals, heart rate, and routine consistency are more useful for choosing a safe wind-down environment.
