@@ -3,562 +3,112 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Sleep Tight hackathon walkthrough and demo launcher.">
-  <title>Sleep Tight · Demo walkthrough</title>
+  <meta name="description" content="Sleep Tight hackathon demo gallery and walkthrough.">
+  <title>Sleep Tight · Demo gallery</title>
   <style>
-    :root {
-      color-scheme: light;
-      --bg: #f3f1eb;
-      --surface: #fffefa;
-      --ink: #17201d;
-      --muted: #5f6965;
-      --line: #d8d8cf;
-      --green: #246c58;
-      --green-soft: #dcece5;
-      --amber: #b85f24;
-      --amber-soft: #f8e7d7;
-      --blue: #315e91;
-      --blue-soft: #dce8f6;
-      --red: #a3463d;
-      --shadow: 0 16px 40px rgba(30, 43, 38, .08);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      min-width: 320px;
-      color: var(--ink);
-      background: var(--bg);
-      font-size: 17px;
-      line-height: 1.5;
-    }
-
-    button, a { font: inherit; }
-    button { cursor: pointer; }
-    a { color: var(--green); font-weight: 760; }
-    :focus-visible { outline: 3px solid #e59c56; outline-offset: 3px; }
-
-    .banner {
-      position: sticky;
-      z-index: 20;
-      top: 0;
-      padding: 10px 18px;
-      color: white;
-      background: #17201d;
-      text-align: center;
-      font-size: 14px;
-      font-weight: 760;
-      letter-spacing: .02em;
-    }
-
-    .banner strong { color: #ffc889; }
-    .shell { width: min(1380px, 100%); margin: auto; padding: 0 24px 72px; }
-
-    .masthead {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(260px, 330px);
-      gap: 32px;
-      align-items: end;
-      padding: 54px 0 34px;
-    }
-
-    .eyebrow {
-      margin: 0 0 8px;
-      color: var(--green);
-      font-size: 13px;
-      font-weight: 850;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      max-width: 860px;
-      margin: 0;
-      font-size: clamp(42px, 6vw, 76px);
-      line-height: 1.02;
-      letter-spacing: 0;
-    }
-
-    .lead {
-      max-width: 780px;
-      margin: 20px 0 0;
-      color: var(--muted);
-      font-size: 20px;
-    }
-
-    .date-card, .surface {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: var(--surface);
-      box-shadow: var(--shadow);
-    }
-
-    .date-card { padding: 20px; }
-    .date-card small { color: var(--muted); }
-    .date-card strong { display: block; margin-top: 2px; font-size: 22px; }
-    .status-line { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
-    .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); }
-
-    .walkthrough {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 360px;
-      gap: 16px;
-      align-items: stretch;
-    }
-
-    .map {
-      position: relative;
-      min-height: 620px;
-      overflow: hidden;
-      padding: 30px;
-    }
-
-    .map::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 72% 58%, rgba(184, 95, 36, .18), transparent 24rem),
-        radial-gradient(circle at 26% 28%, rgba(36, 108, 88, .13), transparent 20rem);
-      pointer-events: none;
-    }
-
-    .map-title { position: relative; z-index: 2; max-width: 680px; }
-    .map-title h2 { margin: 2px 0 8px; font-size: clamp(30px, 4vw, 48px); line-height: 1.1; letter-spacing: 0; }
-    .map-title p { margin: 0; color: var(--muted); }
-
-    .flow-line {
-      position: absolute;
-      z-index: 1;
-      left: 12%;
-      right: 12%;
-      top: 330px;
-      height: 5px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--green), var(--amber), var(--blue));
-      opacity: .52;
-    }
-
-    .node-button {
-      position: absolute;
-      z-index: 3;
-      display: grid;
-      place-items: center;
-      width: 158px;
-      min-height: 158px;
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: 50%;
-      color: var(--ink);
-      background: var(--surface);
-      box-shadow: 0 18px 45px rgba(30, 43, 38, .12);
-      text-align: center;
-      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
-    }
-
-    .node-button::before {
-      content: "";
-      position: absolute;
-      inset: -10px;
-      z-index: -1;
-      border-radius: inherit;
-      background: radial-gradient(circle, rgba(36, 108, 88, .28), transparent 68%);
-      opacity: 0;
-      transform: scale(.92);
-      transition: opacity .18s ease, transform .18s ease;
-    }
-
-    .node-button::after {
-      content: "Click to explore";
-      position: absolute;
-      left: 50%;
-      bottom: -16px;
-      min-height: 28px;
-      padding: 5px 10px;
-      border: 1px solid rgba(23, 32, 29, .12);
-      border-radius: 999px;
-      color: white;
-      background: #17201d;
-      box-shadow: 0 10px 24px rgba(30, 43, 38, .16);
-      font-size: 11px;
-      font-weight: 850;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateX(-50%) translateY(4px);
-      transition: opacity .18s ease, transform .18s ease;
-    }
-
-    .node-button:hover {
-      transform: translateY(-5px);
-      border-color: #98a49e;
-      box-shadow: 0 24px 55px rgba(30, 43, 38, .18);
-    }
-
-    .node-button:hover::before,
-    .node-button:focus-visible::before {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .node-button:hover::after,
-    .node-button:focus-visible::after {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .node-button .icon {
-      display: block;
-      margin: 0 auto 8px;
-      font-size: 38px;
-      line-height: 1;
-    }
-
-    .node-button strong { display: block; font-size: 16px; line-height: 1.1; }
-    .node-button span:last-child { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; }
-
-    .phone { left: 7%; top: 230px; --glow: rgba(49, 94, 145, .36); }
-    .watch { left: 22%; top: 405px; width: 138px; min-height: 138px; --glow: rgba(36, 108, 88, .32); }
-    .codex { left: 43%; top: 244px; width: 188px; min-height: 188px; border-radius: 22px; --glow: rgba(36, 108, 88, .34); }
-    .lamp { right: 17%; top: 410px; --glow: rgba(184, 95, 36, .42); }
-    .report { right: 5%; top: 218px; --glow: rgba(49, 94, 145, .32); }
-    .nudge { right: 34%; bottom: 32px; width: 146px; min-height: 146px; --glow: rgba(163, 70, 61, .32); }
-
-    .phone::before, .watch::before, .codex::before, .lamp::before, .report::before, .nudge::before {
-      background: radial-gradient(circle, var(--glow), transparent 68%);
-    }
-
-    .lamp:hover, .lamp:focus-visible {
-      border-color: #dfa06d;
-      box-shadow: 0 0 0 8px rgba(248, 231, 215, .9), 0 28px 70px rgba(184, 95, 36, .28);
-    }
-
-    .phone:hover, .phone:focus-visible,
-    .report:hover, .report:focus-visible {
-      border-color: #9fb7d0;
-      box-shadow: 0 0 0 8px rgba(220, 232, 246, .82), 0 28px 70px rgba(49, 94, 145, .2);
-    }
-
-    .watch:hover, .watch:focus-visible,
-    .codex:hover, .codex:focus-visible {
-      border-color: #93b7aa;
-      box-shadow: 0 0 0 8px rgba(220, 236, 229, .9), 0 28px 70px rgba(36, 108, 88, .22);
-    }
-
-    .nudge:hover, .nudge:focus-visible {
-      border-color: #d79a94;
-      box-shadow: 0 0 0 8px rgba(250, 225, 222, .86), 0 28px 70px rgba(163, 70, 61, .2);
-    }
-
-    .time-chip {
-      position: absolute;
-      z-index: 2;
-      display: inline-flex;
-      align-items: center;
-      min-height: 34px;
-      padding: 0 12px;
-      border-radius: 999px;
-      color: var(--green);
-      background: var(--green-soft);
-      font-size: 13px;
-      font-weight: 850;
-    }
-
-    .time-955 { left: 12%; top: 194px; }
-    .time-1005 { left: 45%; top: 208px; color: var(--amber); background: var(--amber-soft); }
-    .time-month { right: 8%; top: 184px; color: var(--blue); background: var(--blue-soft); }
-
-    .sidebar {
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      gap: 16px;
-    }
-
-    .talk-card { padding: 24px; }
-    .talk-card h2 { margin: 3px 0 10px; font-size: 27px; line-height: 1.1; }
-    .talk-card p { margin: 0; color: var(--muted); }
-
-    .steps {
-      margin: 20px 0 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .steps li {
-      display: grid;
-      grid-template-columns: 34px minmax(0, 1fr);
-      gap: 12px;
-      padding: 13px 0;
-      border-top: 1px solid var(--line);
-    }
-
-    .steps b {
-      display: grid;
-      width: 30px;
-      height: 30px;
-      place-items: center;
-      border-radius: 50%;
-      color: white;
-      background: var(--ink);
-      font-size: 13px;
-    }
-
-    .steps strong { display: block; }
-    .steps span { display: block; color: var(--muted); font-size: 13px; }
-
-    .quick-links {
-      display: grid;
-      gap: 8px;
-      padding: 18px;
-    }
-
-    .quick-links button, .quick-links a, .open-full, .close {
-      display: inline-flex;
-      min-height: 44px;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      color: var(--ink);
-      background: var(--surface);
-      text-decoration: none;
-      font-weight: 760;
-    }
-
-    .quick-links button:first-child {
-      color: white;
-      border-color: var(--green);
-      background: var(--green);
-    }
-
-    .note {
-      padding: 16px 18px;
-      border-left: 5px solid var(--green);
-      border-radius: 5px 12px 12px 5px;
-      background: var(--green-soft);
-      color: var(--ink);
-      font-size: 14px;
-    }
-
-    .viewer {
-      position: fixed;
-      z-index: 80;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      padding: 22px;
-      background: rgba(23, 32, 29, .72);
-      backdrop-filter: blur(12px);
-    }
-
-    .viewer[hidden] { display: none; }
-    body.modal-open { overflow: hidden; }
-
-    .viewer-panel {
-      display: grid;
-      grid-template-rows: auto minmax(0, 1fr);
-      width: min(1280px, 100%);
-      height: min(820px, 92vh);
-      overflow: hidden;
-      border: 1px solid #bfc5bd;
-      border-radius: 18px;
-      background: var(--surface);
-      box-shadow: 0 28px 90px rgba(0, 0, 0, .34);
-    }
-
-    .viewer-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      min-height: 62px;
-      padding: 10px 12px 10px 20px;
-      border-bottom: 1px solid var(--line);
-      background: var(--surface);
-    }
-
-    .viewer-title {
-      min-width: 0;
-      overflow: hidden;
-      font-weight: 850;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .viewer-actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex: 0 0 auto;
-    }
-
-    .open-full { padding: 0 14px; color: var(--green); }
-    .close { width: 44px; padding: 0; font-size: 24px; line-height: 1; cursor: pointer; }
-    iframe { width: 100%; height: 100%; border: 0; background: white; }
-
-    @media (max-width: 1050px) {
-      .masthead, .walkthrough { grid-template-columns: 1fr; }
-      .date-card { width: max-content; }
-      .sidebar { grid-template-columns: minmax(0, 1fr) minmax(260px, .55fr); grid-template-rows: auto; }
-      .quick-links { align-self: start; }
-      .note { grid-column: 1 / -1; }
-    }
-
-    @media (max-width: 760px) {
-      body { font-size: 16px; }
-      .shell { padding-inline: 14px; }
-      .masthead { padding-top: 38px; }
-      .lead { font-size: 18px; }
-      .date-card { width: 100%; }
-      .map { min-height: 850px; padding: 22px; }
-      .flow-line { left: 50%; right: auto; top: 220px; bottom: 110px; width: 5px; height: auto; }
-      .node-button { position: relative; left: auto; right: auto; top: auto; bottom: auto; width: 100%; min-height: 112px; border-radius: 14px; grid-template-columns: 56px minmax(0, 1fr); text-align: left; margin-top: 12px; }
-      .node-button::after { left: auto; right: 12px; bottom: 10px; transform: translateY(4px); }
-      .node-button:hover::after, .node-button:focus-visible::after { transform: translateY(0); }
-      .node-button .icon { margin: 0; }
-      .node-button strong, .node-button span:last-child { grid-column: 2; }
-      .map-stack { position: relative; z-index: 3; margin-top: 24px; }
-      .time-chip { position: static; margin: 18px 8px 0 0; }
-      .sidebar { grid-template-columns: 1fr; }
-      .viewer { padding: 10px; }
-      .viewer-panel { height: 94vh; border-radius: 12px; }
-      .viewer-bar { align-items: flex-start; flex-direction: column; }
-      .viewer-actions { width: 100%; }
-      .open-full { flex: 1; }
-    }
+    :root{color-scheme:light;--bg:#f3f1eb;--surface:#fffefa;--ink:#17201d;--muted:#5f6965;--line:#d8d8cf;--green:#246c58;--green-soft:#dcece5;--amber:#b85f24;--amber-soft:#f8e7d7;--blue:#315e91;--blue-soft:#dce8f6;--red:#a3463d;--shadow:0 18px 45px rgba(30,43,38,.09);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-width:320px;background:var(--bg);color:var(--ink);font-size:17px;line-height:1.5}a,button{font:inherit}a{color:inherit}button{cursor:pointer}:focus-visible{outline:3px solid #e59c56;outline-offset:3px}.banner{position:sticky;z-index:30;top:0;padding:10px 18px;background:#17201d;color:white;text-align:center;font-size:14px;font-weight:800;letter-spacing:.02em}.banner strong{color:#ffc889}.shell{width:min(1380px,100%);margin:auto;padding:0 24px 80px}.eyebrow{margin:0 0 9px;color:var(--green);font-size:13px;font-weight:850;letter-spacing:.12em;text-transform:uppercase}.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(380px,.7fr);gap:38px;align-items:center;padding:56px 0 32px}.hero h1{max-width:850px;margin:0;font-size:clamp(46px,6.5vw,86px);line-height:1;letter-spacing:0}.lead{max-width:790px;margin:20px 0 0;color:var(--muted);font-size:21px}.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}.button{display:inline-flex;min-height:48px;align-items:center;justify-content:center;padding:0 18px;border:1px solid var(--line);border-radius:11px;background:var(--surface);color:var(--ink);font-weight:800;text-decoration:none}.button.primary{border-color:var(--green);background:var(--green);color:white}.button:hover{border-color:#9fa9a4;filter:brightness(1.02)}.hero-card{overflow:hidden;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--shadow)}.hero-card img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover}.hero-card div{padding:18px 20px}.hero-card strong{display:block;font-size:20px}.hero-card span{display:block;color:var(--muted);font-size:14px}.nav-strip{position:sticky;z-index:20;top:39px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin:12px 0 44px;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:var(--line);box-shadow:var(--shadow)}.nav-strip a{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:center;min-width:0;padding:15px 16px;background:rgba(255,254,250,.95);color:var(--ink);text-decoration:none}.nav-strip b{display:grid;width:32px;height:32px;place-items:center;border-radius:50%;background:var(--green-soft);color:var(--green);font-size:14px}.nav-strip strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.nav-strip span{display:block;overflow:hidden;color:var(--muted);font-size:13px;text-overflow:ellipsis;white-space:nowrap}.section{scroll-margin-top:130px;margin-top:42px}.section-head{display:grid;grid-template-columns:70px minmax(0,1fr) auto;gap:20px;align-items:end;margin-bottom:18px}.num{display:grid;width:62px;height:62px;place-items:center;border-radius:50%;background:var(--ink);color:white;font-size:24px;font-weight:850}.section h2{margin:0;font-size:clamp(32px,4vw,52px);line-height:1.06;letter-spacing:0}.section-head p{max-width:780px;margin:8px 0 0;color:var(--muted);font-size:18px}.showcase{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);gap:16px;align-items:stretch}.shot{overflow:hidden;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--shadow)}.shot img{display:block;width:100%;height:100%;min-height:420px;object-fit:cover;object-position:top}.panel{display:flex;flex-direction:column;justify-content:space-between;gap:24px;padding:26px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--shadow)}.panel h3{margin:4px 0 10px;font-size:28px;line-height:1.1}.panel p{margin:0;color:var(--muted)}.bullets{margin:20px 0 0;padding:0;list-style:none}.bullets li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:12px 0;border-top:1px solid var(--line)}.bullets li::before{content:"";width:12px;height:12px;margin-top:7px;border-radius:50%;background:var(--green)}.two-up{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}.mini{overflow:hidden;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--shadow)}.mini img{display:block;width:100%;height:300px;object-fit:cover;object-position:top}.mini div{padding:18px}.mini h3{margin:0 0 6px;font-size:23px}.mini p{margin:0;color:var(--muted);font-size:14px}.device-grid{display:grid;grid-template-columns:minmax(280px,.55fr) minmax(0,1fr);gap:16px}.device-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.device-photos .mini img{height:520px}.closing{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:22px;align-items:center;margin-top:54px;padding:26px;border:1px solid var(--line);border-radius:18px;background:#17201d;color:white;box-shadow:var(--shadow)}.closing p{margin:6px 0 0;color:#c6d0cc}.closing .button{border-color:#ffc889;background:#ffc889;color:#17201d}.tag{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;background:var(--amber-soft);color:var(--amber);font-size:12px;font-weight:850;letter-spacing:.06em;text-transform:uppercase}
+    @media(max-width:1050px){.hero,.showcase,.device-grid,.closing{grid-template-columns:1fr}.section-head{grid-template-columns:58px minmax(0,1fr)}.section-head .button{grid-column:2}.nav-strip{grid-template-columns:repeat(3,minmax(0,1fr))}.two-up,.device-photos{grid-template-columns:1fr}.device-photos .mini img{height:auto;max-height:680px}}
+    @media(max-width:760px){body{font-size:16px}.shell{padding-inline:14px}.hero{padding-top:38px}.lead{font-size:18px}.nav-strip{position:static;grid-template-columns:1fr}.section-head{grid-template-columns:48px minmax(0,1fr);gap:13px}.num{width:46px;height:46px;font-size:19px}.section-head .button{grid-column:1/-1}.shot img{min-height:280px}.mini img{height:230px}.hero-actions .button,.closing .button{width:100%}}
   </style>
 </head>
 <body>
-  <div class="banner"><strong>SYNTHETIC PROOF OF CONCEPT</strong> · Click any object in the walkthrough to open the matching demo.</div>
+  <div class="banner"><strong>SYNTHETIC PROOF OF CONCEPT</strong> · Click any button to open the matching demo in a new window.</div>
   <main class="shell">
-    <header class="masthead">
+    <header class="hero">
       <div>
         <p class="eyebrow">Sleep Tight platform</p>
-        <h1>A guided walkthrough for the whole demo.</h1>
-        <p class="lead">Start with the full story, then click the watch, MacBook, lamp, report, or nudge object to explore each page in a presentation popup.</p>
+        <h1>One page for the whole Sleep Tight demo.</h1>
+        <p class="lead">Scroll down like a product story. Each section shows the actual screen, explains what to say, and gives you one obvious button to open that demo in a new window.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="computer/platform-demo.html" target="_blank" rel="noopener">Start with main slides</a>
+          <a class="button" href="https://github.com/kwen1510/sleep-tight" target="_blank" rel="noopener">Open GitHub repo</a>
+        </div>
       </div>
-      <aside class="date-card">
-        <small>Demo night</small>
-        <strong>9:55 p.m. to 10:05 p.m.</strong>
-        <span class="status-line"><i class="dot"></i>Ready for hackathon walkthrough</span>
+      <aside class="hero-card">
+        <img src="docs/assets/thumbnail-sleep-tight.jpg" alt="Sleep Tight mascot thumbnail">
+        <div><strong>Hyper-personalized bedtime</strong><span>Phone + watch signals become a safer wind-down routine.</span></div>
       </aside>
     </header>
 
-    <section class="walkthrough">
-      <div class="surface map" aria-label="Interactive Sleep Tight workflow map">
-        <div class="map-title">
-          <p class="eyebrow">Interactive map</p>
-          <h2>From daily vitals to a personalized bedroom.</h2>
-          <p>The objects are the demo controls. Open the main slides first, then use the rest as drill-down moments while presenting.</p>
-        </div>
+    <nav class="nav-strip" aria-label="Demo sections">
+      <a href="#story"><b>1</b><span><strong>Main slides</strong><span>Full narrative</span></span></a>
+      <a href="#devices"><b>2</b><span><strong>Devices</strong><span>Phone + watch</span></span></a>
+      <a href="#dashboard"><b>3</b><span><strong>Dashboard</strong><span>Mac data view</span></span></a>
+      <a href="#room"><b>4</b><span><strong>Room</strong><span>Lamp + sound</span></span></a>
+      <a href="#learning"><b>5</b><span><strong>Learning</strong><span>Report + nudges</span></span></a>
+    </nav>
 
-        <span class="time-chip time-955">21:55 device handoff</span>
-        <span class="time-chip time-1005">22:05 Codex run</span>
-        <span class="time-chip time-month">Monthly learning</span>
-        <div class="flow-line" aria-hidden="true"></div>
+    <section class="section" id="story">
+      <div class="section-head">
+        <div class="num">1</div>
+        <div><p class="eyebrow">Main story</p><h2>Start here when presenting.</h2><p>The platform demo walks through the 9:55 p.m. device handoff, 10:05 p.m. Codex Scheduled run, room response, and monthly personalization loop.</p></div>
+        <a class="button primary" href="computer/platform-demo.html" target="_blank" rel="noopener">Open main slides</a>
+      </div>
+      <div class="showcase">
+        <a class="shot" href="computer/platform-demo.html" target="_blank" rel="noopener"><img src="docs/assets/platform-demo.png" alt="Sleep Tight platform demo"></a>
+        <aside class="panel">
+          <div><span class="tag">Talk track</span><h3>Research gives averages. Sleep Tight learns the person.</h3><p>Use this page to explain why the product focuses on pre-sleep signals instead of unreliable real-time sleep-stage intervention.</p><ul class="bullets"><li>Phone exports daily vitals.</li><li>Watch captures a bounded heart-rate window.</li><li>Codex chooses a safe wind-down plan.</li></ul></div>
+          <a class="button primary" href="computer/platform-demo.html" target="_blank" rel="noopener">Launch this demo</a>
+        </aside>
+      </div>
+    </section>
 
-        <div class="map-stack">
-          <button class="node-button phone" data-title="Main dashboard" data-src="computer/dashboard.html">
-            <span class="icon" aria-hidden="true">▣</span><strong>Phone and Mac dashboard</strong><span>Vitals, sleep, activity, oxygen</span>
-          </button>
-          <button class="node-button watch" data-title="Main slides" data-src="computer/platform-demo.html">
-            <span class="icon" aria-hidden="true">◉</span><strong>Main slides</strong><span>Full end-to-end story</span>
-          </button>
-          <button class="node-button codex" data-title="Main slides" data-src="computer/platform-demo.html">
-            <span class="icon" aria-hidden="true">C</span><strong>Codex Scheduled</strong><span>Analyze sleep quality and pick plan</span>
-          </button>
-          <button class="node-button lamp" data-title="Lamp simulation" data-src="computer/wind-down-demo.html">
-            <span class="icon" aria-hidden="true">◒</span><strong>Lamp and sound</strong><span>Fade light, play background audio</span>
-          </button>
-          <button class="node-button report" data-title="Sleep report" data-src="computer/sleep-report.html">
-            <span class="icon" aria-hidden="true">▤</span><strong>Sleep report</strong><span>30-day learning and routine</span>
-          </button>
-          <button class="node-button nudge" data-title="Future nudge simulator" data-src="research/codex-nudge-simulator.html">
-            <span class="icon" aria-hidden="true">!</span><strong>Future nudges</strong><span>Daytime reminders</span>
-          </button>
+    <section class="section" id="devices">
+      <div class="section-head">
+        <div class="num">2</div>
+        <div><p class="eyebrow">Real devices</p><h2>Show what runs on the phone and watch.</h2><p>These photos make the build feel concrete: the phone syncs Health Connect records, and the watch captures the pre-sleep heart-rate window.</p></div>
+        <a class="button primary" href="computer/dashboard.html" target="_blank" rel="noopener">Open data dashboard</a>
+      </div>
+      <div class="device-grid">
+        <article class="panel"><div><span class="tag">Device handoff</span><h3>9:55 p.m. capture</h3><p>The Android app sends the available 24-hour vitals. The watch records calibrated heart rate for 10 minutes. These are the signals Codex uses for tonight's plan.</p><ul class="bullets"><li>Health Connect categories and permission coverage.</li><li>Timestamped heart-rate readings and summary statistics.</li><li>Local receiver status shown on the dashboard.</li></ul></div><a class="button primary" href="computer/dashboard.html" target="_blank" rel="noopener">Open dashboard</a></article>
+        <div class="device-photos">
+          <article class="mini"><img src="docs/assets/phone-sync.jpeg" alt="Android phone Sleep Tight sync screen"><div><h3>Phone sync</h3><p>Health Connect records sent over private Wi-Fi.</p></div></article>
+          <article class="mini"><img src="docs/assets/watch-vitals.jpeg" alt="Galaxy Watch heart-rate capture"><div><h3>Watch capture</h3><p>Bounded pre-sleep heart-rate window.</p></div></article>
         </div>
       </div>
+    </section>
 
-      <aside class="sidebar">
-        <div class="surface talk-card">
-          <p class="eyebrow">Presenter flow</p>
-          <h2>How to talk through it</h2>
-          <p>Keep it simple: Sleep Tight uses the last signals before bed, then turns them into a room routine that gets better over time.</p>
-          <ol class="steps">
-            <li><b>1</b><div><strong>9:55 p.m.</strong><span>Phone sends 24-hour vitals. Watch records calibrated heart rate for 10 minutes.</span></div></li>
-            <li><b>2</b><div><strong>10:05 p.m.</strong><span>Codex pulls the latest data, analyzes sleep quality where possible, and chooses light plus sound.</span></div></li>
-            <li><b>3</b><div><strong>Bedtime</strong><span>The lamp dims and background sound fades to help the user wind down.</span></div></li>
-            <li><b>4</b><div><strong>Monthly</strong><span>Codex summarizes what worked and personalizes the next routine.</span></div></li>
-          </ol>
-        </div>
+    <section class="section" id="dashboard">
+      <div class="section-head">
+        <div class="num">3</div>
+        <div><p class="eyebrow">Mac dashboard</p><h2>The data arrives in one place.</h2><p>Use the dashboard to show that the system receives the phone/watch payloads and can still run with clearly labelled synthetic data for judging.</p></div>
+        <a class="button primary" href="computer/dashboard.html" target="_blank" rel="noopener">Open dashboard</a>
+      </div>
+      <div class="showcase">
+        <a class="shot" href="computer/dashboard.html" target="_blank" rel="noopener"><img src="docs/assets/dashboard.png" alt="Sleep Tight dashboard"></a>
+        <aside class="panel"><div><span class="tag">What to click</span><h3>Open this after the device photos.</h3><p>It connects the physical demo to the data story: what the phone sends, what the watch sends, and what Codex can use at 10:05 p.m.</p></div><a class="button primary" href="computer/dashboard.html" target="_blank" rel="noopener">Launch dashboard</a></aside>
+      </div>
+    </section>
 
-        <nav class="surface quick-links" aria-label="Quick demo links">
-          <button data-title="Main slides" data-src="computer/platform-demo.html">Open main slides</button>
-          <button data-title="Main dashboard" data-src="computer/dashboard.html">Open main dashboard</button>
-          <button data-title="Lamp simulation" data-src="computer/wind-down-demo.html">Open lamp simulation</button>
-          <button data-title="Sleep report" data-src="computer/sleep-report.html">Open sleep report</button>
-          <button data-title="Future nudge simulator" data-src="research/codex-nudge-simulator.html">Open future nudges</button>
-          <a href="https://github.com/kwen1510/sleep-tight">GitHub repo</a>
-        </nav>
+    <section class="section" id="room">
+      <div class="section-head">
+        <div class="num">4</div>
+        <div><p class="eyebrow">Bedroom response</p><h2>The plan becomes light and sound.</h2><p>This is the most visual part of the demo: Codex chooses a bounded lamp fade and background sound plan, then everything fades toward sleep.</p></div>
+        <a class="button primary" href="computer/wind-down-demo.html" target="_blank" rel="noopener">Open lamp simulation</a>
+      </div>
+      <div class="showcase">
+        <a class="shot" href="computer/wind-down-demo.html" target="_blank" rel="noopener"><img src="docs/assets/wind-down-demo.png" alt="Sleep Tight lamp simulation"></a>
+        <aside class="panel"><div><span class="tag">Bounded routine</span><h3>No risky overnight improvisation.</h3><p>The system avoids reacting to uncertain consumer sleep-stage estimates during sleep. It picks a safe pre-sleep wind-down routine instead.</p><ul class="bullets"><li>Warm amber fade.</li><li>Low-arousal background sound.</li><li>Everything ends at lights out.</li></ul></div><a class="button primary" href="computer/wind-down-demo.html" target="_blank" rel="noopener">Launch lamp simulation</a></aside>
+      </div>
+    </section>
 
-        <div class="note"><strong>Presenter note:</strong> the GitHub Pages hub uses relative links. The dashboard has richer live data when the local Mac receiver is running at <code>127.0.0.1:8766</code>.</div>
-      </aside>
+    <section class="section" id="learning">
+      <div class="section-head">
+        <div class="num">5</div>
+        <div><p class="eyebrow">Personalization loop</p><h2>Then it learns across nights.</h2><p>Close with monthly learning and the future nudge concept: Sleep Tight becomes a personal sleep coach, not just a one-night automation.</p></div>
+        <a class="button primary" href="computer/sleep-report.html" target="_blank" rel="noopener">Open sleep report</a>
+      </div>
+      <div class="two-up">
+        <article class="mini"><a href="computer/sleep-report.html" target="_blank" rel="noopener"><img src="docs/assets/sleep-report.png" alt="Sleep Tight sleep report"></a><div><h3>30-day sleep report</h3><p>What Codex learned across synthetic nights and how it would personalize the next routine.</p><p><a class="button primary" href="computer/sleep-report.html" target="_blank" rel="noopener">Open sleep report</a></p></div></article>
+        <article class="mini"><a href="research/codex-nudge-simulator.html" target="_blank" rel="noopener"><img src="docs/assets/future-nudge.png" alt="Sleep Tight future nudge simulator"></a><div><h3>Future nudge simulator</h3><p>Daytime nudges that connect lifestyle habits back to the evening wind-down routine.</p><p><a class="button primary" href="research/codex-nudge-simulator.html" target="_blank" rel="noopener">Open future nudges</a></p></div></article>
+      </div>
+    </section>
+
+    <section class="closing">
+      <div><p class="eyebrow" style="color:#ffc889">Ready for judges</p><h2 style="margin:0;font-size:34px">Use this page as the live table of contents.</h2><p>Every screenshot is clickable. Every button opens the real demo page in a new window, so you can present without hunting for URLs.</p></div>
+      <a class="button" href="computer/platform-demo.html" target="_blank" rel="noopener">Start presentation</a>
     </section>
   </main>
-
-  <section class="viewer" id="viewer" hidden aria-label="Demo preview">
-    <div class="viewer-panel" role="dialog" aria-modal="true" aria-labelledby="viewerTitle">
-      <header class="viewer-bar">
-        <div class="viewer-title" id="viewerTitle">Demo preview</div>
-        <div class="viewer-actions">
-          <a class="open-full" id="openFull" href="#">Open full page</a>
-          <button class="close" id="closeViewer" aria-label="Close preview">&times;</button>
-        </div>
-      </header>
-      <iframe id="demoFrame" title="Sleep Tight demo preview"></iframe>
-    </div>
-  </section>
-
-  <script>
-    const viewer = document.querySelector('#viewer');
-    const frame = document.querySelector('#demoFrame');
-    const viewerTitle = document.querySelector('#viewerTitle');
-    const openFull = document.querySelector('#openFull');
-    const closeViewer = document.querySelector('#closeViewer');
-    let lastFocus = null;
-
-    function openDemo(button) {
-      lastFocus = button;
-      const src = button.dataset.src;
-      viewerTitle.textContent = button.dataset.title;
-      openFull.href = src;
-      frame.src = src;
-      viewer.hidden = false;
-      document.body.classList.add('modal-open');
-      closeViewer.focus();
-    }
-
-    function closeDemo() {
-      viewer.hidden = true;
-      frame.src = 'about:blank';
-      document.body.classList.remove('modal-open');
-      if (lastFocus) lastFocus.focus();
-    }
-
-    document.querySelectorAll('[data-src]').forEach(button => {
-      button.addEventListener('click', () => openDemo(button));
-    });
-    closeViewer.addEventListener('click', closeDemo);
-    viewer.addEventListener('click', event => {
-      if (event.target === viewer) closeDemo();
-    });
-    window.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && !viewer.hidden) closeDemo();
-    });
-  </script>
 </body>
 </html>
