@@ -77,6 +77,10 @@ Synthetic values are clearly labelled in the dashboards and reports. They are in
 
 These images show the real device surfaces and the judge-facing simulations included in the repo.
 
+| Devpost thumbnail |
+|---|
+| ![Sleep Tight Devpost thumbnail with mascot](docs/assets/thumbnail-sleep-tight.jpg) |
+
 | Interactive demo hub | Device handoff cover |
 |---|---|
 | ![Sleep Tight interactive GitHub Pages demo hub](docs/assets/demo-hub.png) | ![Sleep Tight phone and watch device handoff](docs/assets/device-handoff-thumbnail.jpg) |
