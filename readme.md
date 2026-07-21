@@ -77,6 +77,10 @@ Synthetic values are clearly labelled in the dashboards and reports. They are in
 
 These images show the real device surfaces and the judge-facing simulations included in the repo.
 
+| Interactive demo hub | Device handoff cover |
+|---|---|
+| ![Sleep Tight interactive GitHub Pages demo hub](docs/assets/demo-hub.png) | ![Sleep Tight phone and watch device handoff](docs/assets/device-handoff-thumbnail.jpg) |
+
 | Phone sync | Watch heart-rate capture |
 |---|---|
 | ![Android phone Sleep Tight sync screen](docs/assets/phone-sync.jpeg) | ![Galaxy Watch Sleep Tight vitals push screen](docs/assets/watch-vitals.jpeg) |
