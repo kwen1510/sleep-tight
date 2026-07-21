@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sleep Tight evidence dashboard for light, sound, and smartwatch-guided sleep routines.">
+  <title>Sleep Tight · Evidence dashboard</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #0b0d12;
+      --surface: #12161d;
+      --surface-raised: #181d26;
+      --foreground: #f6f0e8;
+      --muted: #a49c91;
+      --border: #2a303b;
+      --primary: #ed9b52;
+      --primary-soft: #2c2119;
+      --support: #79c6a3;
+      --mixed: #e4b25f;
+      --against: #e17b7f;
+      --info: #7aa9d6;
+      --radius: 18px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--foreground);
+      background:
+        radial-gradient(circle at 86% 2%, rgba(237, 155, 82, .1), transparent 24rem),
+        var(--background);
+      line-height: 1.5;
+    }
+
+    button, input, select { font: inherit; }
+    button, a, select { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+
+    .shell {
+      width: 100%;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 clamp(16px, 4vw, 56px) 64px;
+    }
+
+    .topbar {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 68px;
+      border-bottom: 1px solid rgba(255, 255, 255, .07);
+      background: rgba(11, 13, 18, .9);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand { min-width: 0; font-weight: 760; letter-spacing: -.02em; }
+    .brand span { color: var(--primary); }
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+
+    .button {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--foreground);
+      background: var(--surface);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .button:hover { border-color: #4a5361; background: var(--surface-raised); }
+    .button.primary { border-color: #8f5528; background: #633a20; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, .6fr);
+      gap: 32px;
+      align-items: end;
+      padding: 72px 0 40px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3 { margin: 0; line-height: 1.12; letter-spacing: -.035em; }
+    h1 { max-width: 900px; font-size: clamp(38px, 6vw, 76px); }
+    h2 { font-size: clamp(26px, 3.4vw, 42px); }
+    h3 { font-size: 18px; }
+
+    .hero-copy {
+      max-width: 820px;
+      margin: 20px 0 0;
+      color: #c5bdb2;
+      font-size: clamp(17px, 2vw, 22px);
+    }
+
+    .verdict-box {
+      min-width: 0;
+      padding: 24px;
+      border: 1px solid #57402d;
+      border-radius: var(--radius);
+      background: var(--primary-soft);
+    }
+
+    .verdict-box strong { display: block; margin-bottom: 8px; color: var(--primary); font-size: 13px; }
+    .verdict-box p { margin: 0; font-size: 18px; font-weight: 720; }
+
+    .metric-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--border);
+    }
+
+    .metric { min-width: 0; padding: 22px; background: var(--surface); }
+    .metric b { display: block; font-size: clamp(26px, 3vw, 42px); line-height: 1; font-variant-numeric: tabular-nums; }
+    .metric span { display: block; margin-top: 8px; color: var(--muted); font-size: 13px; }
+
+    .section { padding-top: 72px; scroll-margin-top: 80px; }
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .section-head > div { min-width: 0; }
+    .section-intro { max-width: 720px; margin: 10px 0 0; color: var(--muted); }
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) 190px 190px;
+      gap: 10px;
+      width: min(100%, 680px);
+      margin-bottom: 18px;
+    }
+
+    .control {
+      min-width: 0;
+      min-height: 46px;
+      padding: 0 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--foreground);
+      background: var(--surface);
+      font-size: 16px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { min-width: 0; padding: 17px 16px; text-align: left; vertical-align: top; }
+    th {
+      position: sticky;
+      top: 0;
+      color: var(--muted);
+      background: #10141a;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    tbody tr { border-top: 1px solid var(--border); }
+    tbody tr:hover { background: rgba(255, 255, 255, .018); }
+    td:first-child { width: 52px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    td:nth-child(2) { width: 31%; }
+    td:nth-child(3) { width: 126px; }
+    td:nth-child(4) { min-width: 230px; }
+    td:nth-child(5) { width: 120px; }
+
+    .technique-name { display: block; font-weight: 780; overflow-wrap: anywhere; }
+    .technique-action { display: block; margin-top: 6px; color: var(--muted); font-size: 13px; }
+    details { margin-top: 10px; }
+    summary { color: var(--primary); font-size: 13px; font-weight: 700; cursor: pointer; }
+    details p { margin: 8px 0 0; color: #c6beb4; font-size: 13px; }
+    .source-links { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-top: 9px; }
+    .source-links a { color: #9cc6eb; overflow-wrap: anywhere; }
+
+    .badge {
+      display: inline-flex;
+      min-height: 28px;
+      align-items: center;
+      padding: 3px 9px;
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .badge.use { color: var(--support); background: rgba(121, 198, 163, .08); }
+    .badge.test { color: var(--mixed); background: rgba(228, 178, 95, .08); }
+    .badge.avoid { color: var(--against); background: rgba(225, 123, 127, .08); }
+
+    .evidence-counts { display: grid; gap: 7px; }
+    .evidence-line { display: grid; grid-template-columns: 58px minmax(40px, 1fr) 20px; gap: 8px; align-items: center; font-size: 12px; }
+    .evidence-line span:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .track { height: 6px; overflow: hidden; border-radius: 999px; background: #292e37; }
+    .track i { display: block; width: var(--value); height: 100%; border-radius: inherit; background: currentColor; }
+    .support { color: var(--support); }
+    .mixed { color: var(--mixed); }
+    .against { color: var(--against); }
+    .confidence { color: #c8c0b6; font-size: 13px; font-weight: 700; }
+
+    .method-note {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .routine {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--border);
+      gap: 1px;
+    }
+    .routine-step { min-width: 0; padding: 20px; background: var(--surface); }
+    .routine-step time { display: block; color: var(--primary); font-size: 12px; font-weight: 800; }
+    .routine-step b { display: block; margin-top: 14px; }
+    .routine-step p { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+
+    .watch-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel { min-width: 0; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+    .panel-head { padding: 20px; border-bottom: 1px solid var(--border); }
+    .panel-head p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+
+    .signal-table td:first-child { width: 22%; color: var(--foreground); font-weight: 750; }
+    .signal-table td:nth-child(2) { width: 18%; }
+    .signal-table td:nth-child(3) { width: 25%; }
+    .signal-table td:nth-child(4) { width: 35%; }
+
+    .quality-list { display: grid; }
+    .quality-item { padding: 18px 20px; border-top: 1px solid var(--border); }
+    .quality-item:first-child { border-top: 0; }
+    .quality-item strong { display: block; }
+    .quality-item p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+    .quality-item .tag { display: inline-block; margin-top: 10px; color: var(--info); font-size: 12px; font-weight: 800; }
+
+    .papers {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .paper {
+      min-width: 0;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+    }
+    .paper-meta { display: flex; flex-wrap: wrap; gap: 6px 12px; color: var(--primary); font-size: 12px; font-weight: 800; }
+    .paper h3 { margin-top: 10px; overflow-wrap: anywhere; }
+    .paper p { margin: 10px 0; color: var(--muted); font-size: 14px; }
+    .paper a { color: #9cc6eb; font-weight: 700; }
+
+    .empty { display: none; padding: 36px; color: var(--muted); text-align: center; }
+    .empty.visible { display: block; }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      margin-top: 72px;
+      padding-top: 22px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 1050px) {
+      .hero, .watch-layout { grid-template-columns: 1fr; }
+      .metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .routine { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      .topbar { min-height: 60px; }
+      .top-actions .button:not(.primary) { display: none; }
+      .hero { padding-top: 48px; }
+      .section { padding-top: 56px; }
+      .section-head { align-items: start; flex-direction: column; }
+      .filters { grid-template-columns: 1fr; }
+      .routine { grid-template-columns: 1fr 1fr; }
+      .papers { grid-template-columns: 1fr; }
+      .footer { flex-direction: column; }
+
+      .table-wrap { overflow: visible; border: 0; background: transparent; }
+      .ranking-table, .ranking-table tbody, .ranking-table tr, .ranking-table td { display: block; width: 100%; }
+      .ranking-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+      .ranking-table tbody { display: grid; gap: 12px; }
+      .ranking-table tr { overflow: hidden; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
+      .ranking-table td { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 12px; padding: 12px 16px; border-top: 1px solid var(--border); }
+      .ranking-table td:first-child { border-top: 0; }
+      .ranking-table td::before { content: attr(data-label); color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+      .method-note { border: 1px solid var(--border); border-radius: 14px; flex-direction: column; }
+
+      .signal-scroll { overflow-x: auto; }
+      .signal-table { min-width: 720px; }
+    }
+
+    @media (max-width: 480px) {
+      .shell { padding-inline: 14px; }
+      .metric-strip, .routine { grid-template-columns: 1fr; }
+      .ranking-table td { grid-template-columns: 88px minmax(0, 1fr); }
+      .verdict-box, .metric, .routine-step, .paper { padding: 18px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+
+    @media print {
+      :root { color-scheme: light; --background: #fff; --surface: #fff; --surface-raised: #fff; --foreground: #111; --muted: #555; --border: #ccc; }
+      .topbar, .filters, .button { display: none !important; }
+      body { background: #fff; }
+      .section { break-before: page; }
+      .paper, tr { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">Sleep Tight <span>Research</span></div>
+      <nav class="top-actions" aria-label="Dashboard resources">
+        <a class="button" href="09-deep-literature-review.md">Read review</a>
+        <a class="button primary" href="../output/pdf/sleep-tight-critical-literature-review.pdf">Open PDF</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">Evidence dashboard · 15 July 2026</p>
+          <h1 id="page-title">What actually helps sleep?</h1>
+          <p class="hero-copy">A fast ranking of light, sound, and smartwatch techniques from the Sleep Tight critical literature review.</p>
+        </div>
+        <aside class="verdict-box" aria-label="Overall verdict">
+          <strong>Overall verdict</strong>
+          <p>Make the evening dimmer, sleep in darkness and usually silence, then use the watch to learn across nights—not to stimulate every heartbeat.</p>
+        </aside>
+      </section>
+
+      <section class="metric-strip" aria-label="Review summary">
+        <div class="metric"><b>38</b><span>references in the full review</span></div>
+        <div class="metric"><b>26</b><span>key sources quality-appraised</span></div>
+        <div class="metric"><b>10</b><span>techniques ranked below</span></div>
+        <div class="metric"><b>5</b><span>watch signal groups considered</span></div>
+      </section>
+
+      <section class="section" id="ranking" aria-labelledby="ranking-title">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">01 · Ranked techniques</p>
+            <h2 id="ranking-title">Evidence before enthusiasm</h2>
+            <p class="section-intro">Ranked by practical value, evidence quality, and risk of disturbing sleep. Expand any row for the reasoning and key papers.</p>
+          </div>
+        </div>
+
+        <div class="filters" aria-label="Evidence filters">
+          <input class="control" id="search" type="search" placeholder="Search technique or finding" aria-label="Search techniques">
+          <select class="control" id="verdictFilter" aria-label="Filter by verdict">
+            <option value="all">All verdicts</option>
+            <option value="use">Use now</option>
+            <option value="test">Test carefully</option>
+            <option value="avoid">Avoid</option>
+          </select>
+          <select class="control" id="domainFilter" aria-label="Filter by domain">
+            <option value="all">All domains</option>
+            <option value="light">Light</option>
+            <option value="sound">Sound</option>
+            <option value="wearable">Wearable</option>
+          </select>
+        </div>
+
+        <div class="table-wrap">
+          <table class="ranking-table">
+            <thead>
+              <tr><th>Rank</th><th>Technique</th><th>Verdict</th><th>Key-source count</th><th>Confidence</th></tr>
+            </thead>
+            <tbody id="rankingBody"></tbody>
+          </table>
+          <div class="empty" id="emptyState">No techniques match these filters.</div>
+          <div class="method-note">
+            <span id="resultCount" aria-live="polite"></span>
+            <span>Counts classify key sources directly appraised—not every paper nested inside a systematic review.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="routine" aria-labelledby="routine-title">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">02 · Practical protocol</p>
+            <h2 id="routine-title">A routine you can use tonight</h2>
+            <p class="section-intro">The watch observes and records. The scheduled environment does most of the work.</p>
+          </div>
+        </div>
+        <div class="routine">
+          <article class="routine-step"><time>Morning</time><b>Get bright light</b><p>Daylight strengthens the contrast between day and the dim evening.</p></article>
+          <article class="routine-step"><time>3 h before bed</time><b>Lower melanopic dose</b><p>Aim below 10 lux melanopic EDI at eye level where practical.</p></article>
+          <article class="routine-step"><time>45 min before bed</time><b>Start wind-down</b><p>Fade warm, low-melanopic light and optionally play familiar low-arousal music.</p></article>
+          <article class="routine-step"><time>Lights-out</time><b>Darkness and silence</b><p>Target below 1 lux melanopic EDI. Use masking only for a real noise problem.</p></article>
+          <article class="routine-step"><time>During sleep</time><b>Watch, don’t react</b><p>Record movement and cardiac trends. Do not brighten or raise sound from HR alone.</p></article>
+          <article class="routine-step"><time>Morning review</time><b>Rate before looking</b><p>Record perceived quality and alertness, then compare multi-night watch trends.</p></article>
+        </div>
+      </section>
+
+      <section class="section" id="watch" aria-labelledby="watch-title">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">03 · Smartwatch use</p>
+            <h2 id="watch-title">What your watch can contribute</h2>
+            <p class="section-intro">Useful signals are indirect and probabilistic. Combine them over time; never turn one sample into a diagnosis or a stimulus.</p>
+          </div>
+        </div>
+
+        <div class="watch-layout">
+          <section class="panel" aria-labelledby="signals-title">
+            <div class="panel-head"><h3 id="signals-title">Signals and safe uses</h3><p>Galaxy Watch4 and later can expose these through Samsung APIs on supported models.</p></div>
+            <div class="signal-scroll" role="region" aria-label="Watch signals table" tabindex="0">
+              <table class="signal-table">
+                <thead><tr><th>Signal</th><th>What it is</th><th>Useful marker</th><th>Safe product action</th></tr></thead>
+                <tbody>
+                  <tr><td>Heart rate</td><td>Measured from PPG</td><td>Deviation from personal sleeping baseline; sustained descent or elevation</td><td>Log trends. Never infer mood or increase sound from a single rise.</td></tr>
+                  <tr><td>IBI / pulse variability</td><td>Measured intervals, quality-dependent</td><td>Autonomic recovery trend across clean, comparable nights</td><td>Use next morning and over weeks; reject motion-corrupted intervals.</td></tr>
+                  <tr><td>Movement</td><td>Accelerometer</td><td>Settling, restlessness, probable awakenings, time in bed</td><td>Combine with cardiac data for coarse states and an explicit unknown state.</td></tr>
+                  <tr><td>Respiration / SpO₂</td><td>Derived or intermittently measured</td><td>Repeated irregularity or desaturation flags from validated vendor features</td><td>Context only. Persistent concerns belong with a clinician, not the lamp controller.</td></tr>
+                  <tr><td>Skin temperature</td><td>Peripheral trend</td><td>Deviation from the user’s baseline; illness or cycle context</td><td>Explain unusual nights retrospectively; do not treat it as room temperature.</td></tr>
+                  <tr><td>Sleep stages</td><td>Vendor inference</td><td>Exploratory multi-night pattern</td><td>Morning review only. Do not trigger light or sound from a claimed live stage.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <aside class="panel" aria-labelledby="markers-title">
+            <div class="panel-head"><h3 id="markers-title">Useful composite markers</h3><p>These are product research targets, not clinical diagnoses.</p></div>
+            <div class="quality-list">
+              <div class="quality-item"><strong>Settling probability</strong><p>Several minutes of lower movement plus a plausible HR descent relative to the same user.</p><span class="tag">Live · medium confidence</span></div>
+              <div class="quality-item"><strong>Probable arousal burden</strong><p>Sustained movement and cardiac change, counted across the night rather than acted on immediately.</p><span class="tag">Live log · low-medium confidence</span></div>
+              <div class="quality-item"><strong>Recovery deviation</strong><p>Sleeping HR above baseline, lower clean-signal HRV, fragmented movement, and poor morning rating.</p><span class="tag">Morning · trend only</span></div>
+              <div class="quality-item"><strong>Schedule regularity</strong><p>Variance in session start, probable sleep onset, and wake time across at least one week.</p><span class="tag">Weekly · useful</span></div>
+              <div class="quality-item"><strong>Data confidence</strong><p>Contact quality, packet completeness, motion artefact, battery, and contradictory channels.</p><span class="tag">Always · mandatory</span></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section" id="papers" aria-labelledby="papers-title">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">04 · Paper highlights</p>
+            <h2 id="papers-title">The papers that change the decision</h2>
+            <p class="section-intro">A short reading list spanning consensus, meta-analysis, controlled experiments, and device validation.</p>
+          </div>
+        </div>
+        <div class="papers" id="paperGrid"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>General-wellness research dashboard; not medical advice or a diagnostic tool.</span>
+      <span>Source review current through 15 July 2026.</span>
+    </footer>
+  </div>
+
+  <script>
+    const techniques = [
+      {
+        rank: 1, name: 'Darkness during core sleep', domain: 'light', verdict: 'use', verdictLabel: 'Use now', confidence: 'Moderate',
+        support: 2, mixed: 0, against: 0,
+        action: 'Keep the lamp off after lights-out; use only a very dim safety light for an explicit event.',
+        rationale: 'Consensus recommends below 1 lux melanopic EDI during sleep, and controlled room-light exposure increased nocturnal heart rate and next-morning insulin resistance.',
+        sources: [['Brown 2022', 'https://doi.org/10.1371/journal.pbio.3001571'], ['Mason 2022', 'https://doi.org/10.1073/pnas.2113290119']]
+      },
+      {
+        rank: 2, name: 'Low-melanopic evening dimming', domain: 'light', verdict: 'use', verdictLabel: 'Use now', confidence: 'Moderate',
+        support: 4, mixed: 1, against: 0,
+        action: 'Reduce total brightness early and aim below 10 lux melanopic EDI at the eyes during the final three hours.',
+        rationale: 'Room light can delay melatonin, while spectrally tuned low-melanopic light reduces melatonin suppression and alerting effects. Sleep-outcome effect sizes remain variable.',
+        sources: [['Brown 2022', 'https://doi.org/10.1371/journal.pbio.3001571'], ['Gooley 2011', 'https://doi.org/10.1210/jc.2010-2098'], ['Rahman 2017', 'https://doi.org/10.1016/j.physbeh.2017.05.002'], ['Schollhorn 2023', 'https://pubmed.ncbi.nlm.nih.gov/36854795/']]
+      },
+      {
+        rank: 3, name: 'Source control or earplugs for external noise', domain: 'sound', verdict: 'use', verdictLabel: 'Use when noisy', confidence: 'Moderate',
+        support: 2, mixed: 0, against: 0,
+        action: 'Fix, block, or attenuate intermittent noise before adding continuous masking.',
+        rationale: 'Environmental noise disrupts sleep. In a controlled 2026 trial, earplugs protected sleep better than 40–50 dBA pink noise.',
+        sources: [['Smith 2022', 'https://doi.org/10.1289/EHP10197'], ['Basner 2026', 'https://doi.org/10.1093/sleep/zsag001']]
+      },
+      {
+        rank: 4, name: 'Optional pre-sleep music', domain: 'sound', verdict: 'use', verdictLabel: 'Use if pleasant', confidence: 'Moderate',
+        support: 3, mixed: 1, against: 0,
+        action: 'Play familiar, predictable, low-arousal music for roughly 30–45 minutes, then fade to silence.',
+        rationale: 'Music probably improves subjective sleep quality in adults with insomnia symptoms. Objective actigraphy or PSG improvements are less consistent, and no genre is clearly superior.',
+        sources: [['Cochrane 2022', 'https://pubmed.ncbi.nlm.nih.gov/36000763/'], ['Lund 2022', 'https://pubmed.ncbi.nlm.nih.gov/35697087/'], ['Yan 2024', 'https://doi.org/10.1016/j.sleep.2024.07.018'], ['Zhao 2024', 'https://doi.org/10.1192/j.eurpsy.2024.1773']]
+      },
+      {
+        rank: 5, name: 'Bright daytime light and a scheduled dawn', domain: 'light', verdict: 'use', verdictLabel: 'Use or test', confidence: 'Low–moderate',
+        support: 2, mixed: 1, against: 0,
+        action: 'Seek strong daytime light; optionally start a dawn ramp 20–30 minutes before a fixed wake time.',
+        rationale: 'Daytime light supports circadian contrast. Small dawn studies improve morning alertness, but evidence for better overnight architecture is limited.',
+        sources: [['Brown 2022', 'https://doi.org/10.1371/journal.pbio.3001571'], ['Thompson 2014', 'https://doi.org/10.1007/s00421-014-2831-z']]
+      },
+      {
+        rank: 6, name: 'Smartwatch trend monitoring', domain: 'wearable', verdict: 'test', verdictLabel: 'Use carefully', confidence: 'Moderate',
+        support: 4, mixed: 2, against: 0,
+        action: 'Use movement, HR/IBI, timing, and morning ratings to compare repeated nights and personal baselines.',
+        rationale: 'Wearables are useful for broad timing and longitudinal context, but nightly metrics are biased and performance changes by model, population, firmware, and algorithm.',
+        sources: [['Lee 2025', 'https://doi.org/10.5664/jcsm.11460'], ['Schyvens 2025', 'https://doi.org/10.1093/sleepadvances/zpaf021'], ['Lee 2023', 'https://pubmed.ncbi.nlm.nih.gov/37917155/'], ['AASM 2018', 'https://doi.org/10.5664/jcsm.7128']]
+      },
+      {
+        rank: 7, name: 'Minimum-effective sound masking', domain: 'sound', verdict: 'test', verdictLabel: 'Test only if needed', confidence: 'Very low',
+        support: 0, mixed: 2, against: 1,
+        action: 'If real external noise remains, compare silence with the lowest calibrated masking level; stop if sleep feels worse.',
+        rationale: 'Systematic reviews are heterogeneous and do not strongly support broadband noise. Total room sound should be measured at the pillow, not inferred from a volume percentage.',
+        sources: [['Riedy 2021', 'https://doi.org/10.1016/j.smrv.2020.101385'], ['Capezuti 2022', 'https://doi.org/10.5664/jcsm.9860'], ['Basner 2026', 'https://doi.org/10.1093/sleep/zsag001']]
+      },
+      {
+        rank: 8, name: 'Amber or red as a “sedative colour”', domain: 'light', verdict: 'test', verdictLabel: 'Preference only', confidence: 'Very low',
+        support: 0, mixed: 2, against: 0,
+        action: 'Choose amber or ember because it is pleasant and can be low-melanopic—not because the hue is proven to induce sleep.',
+        rationale: 'Small coloured-light studies report autonomic changes but do not establish better sleep after brightness and melanopic dose are controlled.',
+        sources: [['Grote 2014', 'https://pubmed.ncbi.nlm.nih.gov/24489590/'], ['Yuda 2016', 'https://pubmed.ncbi.nlm.nih.gov/27716445/']]
+      },
+      {
+        rank: 9, name: 'All-night pink noise at 40–50 dBA', domain: 'sound', verdict: 'avoid', verdictLabel: 'Avoid', confidence: 'Moderate concern',
+        support: 0, mixed: 2, against: 1,
+        action: 'Do not make this a default. Prefer silence, source control, or earplugs.',
+        rationale: 'A seven-night PSG crossover found reduced REM and worse subjective sleep with continuous pink noise; earlier reviews already rated benefit evidence very low.',
+        sources: [['Basner 2026', 'https://doi.org/10.1093/sleep/zsag001'], ['Riedy 2021', 'https://doi.org/10.1016/j.smrv.2020.101385']]
+      },
+      {
+        rank: 10, name: 'Real-time stage-triggered light or sound', domain: 'wearable', verdict: 'avoid', verdictLabel: 'Avoid', confidence: 'Low for benefit',
+        support: 0, mixed: 2, against: 3,
+        action: 'Do not turn lights or sound up from a consumer-watch REM/deep label or a heart-rate spike.',
+        rationale: 'Wrist PPG and movement can support experimental probabilistic staging, but consumer devices often miss quiet wake and vary widely in four-stage accuracy. No reviewed trial validates the complete watch-triggered intervention.',
+        sources: [['Fonseca 2023', 'https://doi.org/10.1038/s41598-023-36444-2'], ['Lee 2025', 'https://doi.org/10.5664/jcsm.11460'], ['Schyvens 2025', 'https://doi.org/10.1093/sleepadvances/zpaf021']]
+      }
+    ];
+
+    const papers = [
+      { meta: 'Consensus · Light', title: 'Brown et al. (2022)', finding: 'Defines practical melanopic EDI targets for day, evening, and sleep.', verdict: 'Foundation for the lighting safety envelope.', url: 'https://doi.org/10.1371/journal.pbio.3001571' },
+      { meta: 'Controlled trial · Light · n=20', title: 'Mason et al. (2022)', finding: 'Room light during sleep increased nocturnal heart rate and next-morning insulin resistance.', verdict: 'Keep core sleep dark.', url: 'https://doi.org/10.1073/pnas.2113290119' },
+      { meta: 'Meta-analysis · Wearables · 24 studies', title: 'Lee et al. (2025)', finding: 'Consumer wrist estimates differed from PSG across standard sleep metrics with high heterogeneity.', verdict: 'Use trends, not PSG equivalence.', url: 'https://doi.org/10.5664/jcsm.11460' },
+      { meta: 'PSG validation · Six devices', title: 'Schyvens et al. (2025)', finding: 'Sleep sensitivity was high, but wake specificity ranged from 29.39% to 52.15%.', verdict: 'Quiet wake needs an unknown state.', url: 'https://doi.org/10.1093/sleepadvances/zpaf021' },
+      { meta: 'Cochrane review · Music · 13 trials', title: 'Jespersen et al. (2022)', finding: 'Music probably improved subjective sleep quality, without clear objective improvement.', verdict: 'Offer music as an optional pre-sleep ritual.', url: 'https://pubmed.ncbi.nlm.nih.gov/36000763/' },
+      { meta: 'Systematic review · Noise · 38 studies', title: 'Riedy et al. (2021)', finding: 'Evidence for continuous broadband noise improving sleep was rated very low.', verdict: 'No default white, pink, or brown noise.', url: 'https://doi.org/10.1016/j.smrv.2020.101385' },
+      { meta: 'PSG crossover · Noise · n=25', title: 'Basner et al. (2026)', finding: 'Pink noise at 40–50 dBA reduced REM and worsened subjective outcomes; earplugs were better.', verdict: 'Avoid indiscriminate all-night pink noise.', url: 'https://doi.org/10.1093/sleep/zsag001' },
+      { meta: 'Position statement · Clinical use', title: 'AASM / Khosla et al. (2018)', finding: 'Consumer sleep technology cannot diagnose or treat sleep disorders without appropriate validation.', verdict: 'Keep Sleep Tight in general wellness.', url: 'https://doi.org/10.5664/jcsm.7128' }
+    ];
+
+    const rankingBody = document.querySelector('#rankingBody');
+    const emptyState = document.querySelector('#emptyState');
+    const resultCount = document.querySelector('#resultCount');
+    const search = document.querySelector('#search');
+    const verdictFilter = document.querySelector('#verdictFilter');
+    const domainFilter = document.querySelector('#domainFilter');
+
+    function evidenceLine(label, count, tone, max) {
+      const value = count ? Math.max(10, count / max * 100) : 0;
+      return `<div class="evidence-line ${tone}"><span>${label}</span><span class="track"><i style="--value:${value}%"></i></span><span>${count}</span></div>`;
+    }
+
+    function renderTechniques() {
+      const query = search.value.trim().toLowerCase();
+      const verdict = verdictFilter.value;
+      const domain = domainFilter.value;
+      const filtered = techniques.filter(item =>
+        (verdict === 'all' || item.verdict === verdict) &&
+        (domain === 'all' || item.domain === domain) &&
+        (!query || `${item.name} ${item.action} ${item.rationale}`.toLowerCase().includes(query))
+      );
+
+      rankingBody.innerHTML = filtered.map(item => {
+        const max = Math.max(1, item.support, item.mixed, item.against);
+        const links = item.sources.map(([label, url]) => `<a href="${url}" target="_blank" rel="noreferrer">${label}</a>`).join('');
+        return `<tr>
+          <td data-label="Rank">${item.rank}</td>
+          <td data-label="Technique"><span class="technique-name">${item.name}</span><span class="technique-action">${item.action}</span><details><summary>Why this verdict</summary><p>${item.rationale}</p><div class="source-links">${links}</div></details></td>
+          <td data-label="Verdict"><span class="badge ${item.verdict}">${item.verdictLabel}</span></td>
+          <td data-label="Evidence"><div class="evidence-counts">${evidenceLine('Support', item.support, 'support', max)}${evidenceLine('Mixed', item.mixed, 'mixed', max)}${evidenceLine('Against', item.against, 'against', max)}</div></td>
+          <td data-label="Confidence"><span class="confidence">${item.confidence}</span></td>
+        </tr>`;
+      }).join('');
+
+      emptyState.classList.toggle('visible', filtered.length === 0);
+      resultCount.textContent = `${filtered.length} of ${techniques.length} techniques shown`;
+    }
+
+    document.querySelector('#paperGrid').innerHTML = papers.map(paper => `<article class="paper"><div class="paper-meta">${paper.meta}</div><h3>${paper.title}</h3><p>${paper.finding}</p><p><strong>Verdict:</strong> ${paper.verdict}</p><a href="${paper.url}" target="_blank" rel="noreferrer">Open source paper</a></article>`).join('');
+
+    [search, verdictFilter, domainFilter].forEach(control => control.addEventListener('input', renderTechniques));
+    renderTechniques();
+  </script>
+</body>
+</html>

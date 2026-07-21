@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tile_label">Sleep Tight</string>
+    <string name="tile_description">Sync current heart rate and request phone health data for the Sleep Tight Mac</string>
+</resources>

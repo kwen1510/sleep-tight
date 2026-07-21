@@ -1,0 +1,16 @@
+.gradle/
+.idea/
+.kotlin/
+build/
+**/build/
+**/__pycache__/
+*.pyc
+*.log
+*-error.log
+local.properties
+computer/config.json
+computer/data/
+tmp/
+output/
+slides/sleep-tight-workflow/
+.DS_Store

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "profile_label": {"type": "string", "minLength": 3, "maxLength": 80},
+    "light_start_percent": {"type": "integer", "minimum": 24, "maximum": 42},
+    "fade_minutes": {"type": "integer", "minimum": 20, "maximum": 60},
+    "sound_profile": {
+      "type": "string",
+      "enum": ["low_arousal_instrumental", "pink_noise", "brown_noise", "ocean"]
+    },
+    "sound_start_percent": {"type": "integer", "minimum": 14, "maximum": 22},
+    "tempo_bpm": {"type": "integer", "minimum": 55, "maximum": 72},
+    "confidence": {"type": "string", "enum": ["low", "medium", "high"]},
+    "decision_reason": {"type": "string", "minLength": 10, "maxLength": 500},
+    "evidence_used": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {"type": "string", "minLength": 2, "maxLength": 160}
+    },
+    "missing_data": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {"type": "string", "minLength": 2, "maxLength": 100}
+    }
+  },
+  "required": [
+    "profile_label", "light_start_percent", "fade_minutes", "sound_profile",
+    "sound_start_percent", "tempo_bpm", "confidence", "decision_reason",
+    "evidence_used", "missing_data"
+  ]
+}
