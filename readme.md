@@ -1,5 +1,15 @@
 # Sleep Tight
 
+## How GPT-5.6 And Codex Were Used
+
+Sleep Tight was built for OpenAI Build Week with **GPT-5.6 as the research and product strategy partner** and **Codex as the main build partner**.
+
+The starting idea was to run an agent overnight to make sleep better in the background. GPT-5.6 research changed the direction: the more useful and safer opportunity was not reacting to uncertain real-time sleep-stage estimates, but using the period right before sleep. That led to the core workflow: look at the day's vitals, capture a bounded 10-minute pre-bed heart-rate window, and hyper-personalize the user's wind-down environment before sleep starts.
+
+Codex then turned that research direction into the runnable prototype. It helped design and implement the phone, Galaxy Watch, and Mac architecture; build the Mac receiver and local JSON snapshot pipeline; create the dashboards, lamp simulation, 30-day sleep report, future nudge simulator, GitHub Pages walkthrough, setup scripts, tests, README, and presentation materials; and iterate quickly on demo polish for the hackathon submission.
+
+The repo is structured so judges can see both sides clearly: GPT-5.6 shaped the product decision and safety boundary, while Codex accelerated the actual implementation, debugging, documentation, and demo packaging.
+
 ## Start Here: Let Codex Set Up The Demo
 
 Open Codex in this repository, copy the full prompt below, and let it prepare the Mac receiver, install the required pieces, launch the local demo pages, and walk you through connecting the phone and Galaxy Watch.
@@ -160,34 +170,6 @@ flowchart LR
 3. The light starts dimming and the music plays to facilitate sleep.
 4. Monthly logs summarize what the AI has learnt across the nights.
 5. Future plans add daytime nudges that remind the user to follow habits that support the evening routine.
-
-## How GPT-5.6 Shaped The Build
-
-The starting idea was to run an agent overnight and let it make sleep better in the background. GPT-5.6 research changed the design direction: the strongest practical signals for this prototype come from the period right before sleep, not from trying to infer sleep stages and react while someone is already asleep.
-
-That led to a safer workflow: look at the day's vitals, capture a final pre-bed heart-rate window, then hyper-personalize the user's wind-down environment before sleep starts.
-
-The implementation was split into three applications:
-
-- an Android phone app that exports Health Connect records;
-- a Samsung Galaxy Watch app that runs on a timer and captures heart rate;
-- a Mac app that receives local data, builds the nightly snapshot, and coordinates the recommendation.
-
-To make the physical experience demonstrable without smart-home hardware, Codex designed a simulated lamp and background-sound scene. It also generated a 30-day simulated review so the repo can show what Codex would learn after repeated nights and how that learning would personalize the experience.
-
-## Where Codex Accelerated The Work
-
-Codex was used as the main build partner rather than only as a code autocomplete tool. It helped:
-
-- turn the GPT-5.6 research direction into a concrete local-first architecture;
-- build the Mac receiver, local dashboards, and JSON snapshot pipeline;
-- implement the Android phone and Galaxy Watch project structure;
-- create the interactive lamp and sound simulation used for judging;
-- generate the 30-day synthetic learning report for demonstration;
-- write the setup scripts, tests, README, and presentation materials;
-- debug presentation issues quickly, including GitHub Pages routing and watch UI layout.
-
-The project is intentionally structured so a judge can see both the runnable product and the development story: the repo contains the working app code, the hosted demo, the research notes, the setup prompt, and the Codex project history.
 
 ## Important Product Decisions
 
