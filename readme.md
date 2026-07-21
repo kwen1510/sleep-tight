@@ -1,5 +1,39 @@
 # Sleep Tight
 
+## Start Here: Let Codex Set Up The Demo
+
+Open Codex in this repository, copy the full prompt below, and let it prepare the Mac receiver, install the required pieces, launch the local demo pages, and walk you through connecting the phone and Galaxy Watch.
+
+```text
+You are helping me set up Sleep Tight from this GitHub repository.
+
+Goal:
+Run the full Sleep Tight hackathon demo locally, connect my Android phone and Samsung Galaxy Watch where possible, and give me clear step-by-step instructions until the Mac dashboard, lamp simulation, sleep report, and future nudge demo all work.
+
+Please do the following:
+1. Inspect the repository structure and explain the three-part system: Android phone app, Galaxy Watch app, and Mac local receiver.
+2. Install or verify the local dependencies needed for the Mac receiver and demo pages.
+3. Start the Mac receiver/background app so it can accept phone and watch data.
+4. Launch the local demo pages:
+   - Main slides: computer/platform-demo.html
+   - Main dashboard: computer/dashboard.html
+   - Lamp simulation: computer/wind-down-demo.html
+   - Sleep report: computer/sleep-report.html
+   - Future nudge simulator: research/codex-nudge-simulator.html
+5. Help me connect the Android phone app so it can export the last 24 hours of Health Connect vitals to the Mac.
+6. Help me connect the Galaxy Watch app so it can capture the final 10-minute pre-sleep heart-rate window and send it to the Mac.
+7. Verify that the dashboard receives data. If real device data is unavailable, use the synthetic demo data and clearly label it as synthetic.
+8. Explain the nightly workflow in presentation terms: 9:55 p.m. device handoff, 10:05 p.m. Codex Scheduled analysis, lamp and background sound wind-down, monthly learning logs, and future daytime nudges.
+9. Do not treat this as medical advice. Keep the setup local-first and privacy-conscious.
+
+When you are done, give me:
+- the local URLs to open;
+- what data the phone is sending;
+- what data the watch is sending;
+- how to confirm the Mac receiver is working;
+- a short talk track I can use for a hackathon demo.
+```
+
 Sleep Tight is a local-first bedtime personalization prototype. A phone, Galaxy Watch, and Mac work together each night so Codex can use the day's vitals and the final pre-sleep heart-rate window to choose a gentle light and background-sound plan.
 
 The project avoids reacting to uncertain real-time sleep stages. Instead, it focuses on the period right before sleep, where recent behaviour, stress signals, heart rate, and routine consistency are more useful for choosing a safe wind-down environment.
